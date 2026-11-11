@@ -102,6 +102,14 @@ function scrape(doc, url) {
 		item.court = citationMatch[3];
 		item.firstPage = citationMatch[4];
 	}
+	else if (citationMatch) {
+		// Cases without a neutral citation: keep the CanLII citation in the court
+		// field (e.g. "CanLII 17741 (QC CS)"), so that styles print "2000 CanLII 17741 (QC CS)".
+		item.notes.push({ note: (french ? "Référence CanLII : " : "CanLII citation: ") + citationMatch[2] + " " + citationMatch[3] + " " + citationMatch[4]
+			+ (citationMatch[5] ? " (" + citationMatch[5] + ")" : "")
+			+ (item.court ? (french ? "; Tribunal : " : "; Court: ") + item.court : "") });
+		item.court = citationMatch[3] + " " + citationMatch[4] + (citationMatch[5] ? " (" + citationMatch[5] + ")" : "");
+	}
 	var shortURL = doc.querySelector(".documentStaticUrl");
 	item.url = shortURL ? (shortURL.getAttribute("href") || clean(shortURL.textContent)) : url.replace(/[?#].*$/, "");
 	item.attachments.push({ url: url.replace(/\.html(?:[?#].*)?$/, ".pdf"), title: "CanLII Full Text PDF", mimeType: "application/pdf" });
@@ -361,6 +369,76 @@ var testCases = [
 				"notes": [
 					{
 						"note": "Référence neutre : 2026 QCCA 1417; Tribunal : Cour d'appel du Québec"
+					}
+				],
+				"seeAlso": []
+			}
+		]
+	},
+	{
+		"type": "web",
+		"url": "https://www.canlii.org/fr/qc/qccs/doc/2000/2000canlii17741/2000canlii17741.html",
+		"items": [
+			{
+				"itemType": "case",
+				"caseName": "Malo c. Laoun",
+				"creators": [],
+				"dateDecided": "2000-01-12",
+				"court": "CanLII 17741 (QC CS)",
+				"docketNumber": "500-17-002955-980",
+				"url": "https://canlii.ca/t/1kg5g",
+				"attachments": [
+					{
+						"title": "CanLII Full Text PDF",
+						"mimeType": "application/pdf"
+					},
+					{
+						"title": "CanLII Snapshot",
+						"mimeType": "text/html"
+					}
+				],
+				"tags": [],
+				"notes": [
+					{
+						"note": "Autres références : [2000] RJQ 458 — EYB 2000-15944"
+					},
+					{
+						"note": "Référence CanLII : 2000 CanLII 17741 (QC CS); Tribunal : Cour supérieure du Québec"
+					}
+				],
+				"seeAlso": []
+			}
+		]
+	},
+	{
+		"type": "web",
+		"url": "https://www.canlii.org/en/ns/nssc/doc/1990/1990canlii2604/1990canlii2604.html",
+		"items": [
+			{
+				"itemType": "case",
+				"caseName": "R. v. Nova Scotia Pharmaceutical Society",
+				"creators": [],
+				"dateDecided": "1990-09-05",
+				"court": "CanLII 2604 (NS SCTD)",
+				"docketNumber": "CR. No. 11486",
+				"url": "https://canlii.ca/t/1nx16",
+				"attachments": [
+					{
+						"title": "CanLII Full Text PDF",
+						"mimeType": "application/pdf"
+					},
+					{
+						"title": "CanLII Snapshot",
+						"mimeType": "text/html"
+					}
+				],
+				"tags": [],
+				"notes": [
+					{
+						"note": "Other Citations: 73 DLR (4th) 500 — 22 ACWS (3d) 779 — 263 APR 296 — 98 NSR (2d) 296 — 59 CCC (3d) 30 — 10 WCB (2d) 578 — 32 CPR (3d) 259"
+					},
+					{
+						"note": "CanLII citation: 1990 CanLII 2604 (NS SCTD); Court: Trial Division of the Supreme Court of Nova Scotia"
 					}
 				],
 				"seeAlso": []
