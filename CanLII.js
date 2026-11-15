@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2026-10-29 17:33:24"
+	"lastUpdated": "2026-11-15 23:09:48"
 }
 
 /*
@@ -37,6 +37,8 @@
 
 
 var canLiiRegexp = /^https?:\/\/(?:www\.)?canlii\.org\/(?:en|fr)\/[^/]+\/[^/]+\/doc\//;
+// Commentary documents, e.g. /fr/doctrine/doc/2025CanLIIDocs1985 or /en/commentary/doc/2025CanLIIDocs1985
+var commentaryRegexp = /^https?:\/\/(?:www\.)?canlii\.org\/(?:en\/commentary|fr\/doctrine)\/doc\/([^/?#]+)/;
 
 function clean(value) {
 	return (value || "").replace(/\s+/g, " ").trim();
@@ -60,6 +62,9 @@ function metadataValue(doc, labels) {
 }
 
 function detectWeb(doc, url) {
+	if (commentaryRegexp.test(url)) {
+		return meta(doc, "citation_journal_title") ? "journalArticle" : "document";
+	}
 	if (canLiiRegexp.test(url)) return "case";
 	for (var link of doc.querySelectorAll("a[href]")) {
 		if (canLiiRegexp.test(link.href)) return "multiple";
@@ -117,8 +122,33 @@ function scrape(doc, url) {
 	item.complete();
 }
 
+async function scrapeCommentary(doc, url) {
+	var translator = Zotero.loadTranslator("web");
+	// Embedded Metadata
+	translator.setTranslator("951c027d-74ac-47d4-a107-9c3069ab7b48");
+	translator.setDocument(doc);
+	translator.setHandler("itemDone", function (obj, item) {
+		item.libraryCatalog = "CanLII";
+		// The page description repeats the citation; it is not an abstract.
+		delete item.abstractNote;
+		// The page scripts add the permalink; fall back to the page address.
+		var shortURL = doc.querySelector('a[href^="https://canlii.ca/t/"]');
+		item.url = shortURL ? shortURL.getAttribute("href") : url.replace(/[?#].*$/, "");
+		// The full-text link is also added by the page scripts, so build the PDF
+		// address from the document ID. The PDF replaces the page snapshot.
+		var id = url.match(commentaryRegexp)[1];
+		item.attachments = [{ url: "https://www.canlii.org/w/canlii/" + id + ".pdf", title: "CanLII Full Text PDF", mimeType: "application/pdf" }];
+		item.complete();
+	});
+	var em = await translator.getTranslatorObject();
+	await em.doWeb(doc, url);
+}
+
 async function doWeb(doc, url) {
-	if (canLiiRegexp.test(url)) {
+	if (commentaryRegexp.test(url)) {
+		await scrapeCommentary(doc, url);
+	}
+	else if (canLiiRegexp.test(url)) {
 		scrape(doc, url);
 	}
 	else {
@@ -132,6 +162,7 @@ async function doWeb(doc, url) {
 
 // Site language is independent of the document URL language. The French
 // cases below expect the French interface selected in CanLII's language menu.
+
 /** BEGIN TEST CASES **/
 var testCases = [
 	{
@@ -441,6 +472,41 @@ var testCases = [
 						"note": "CanLII citation: 1990 CanLII 2604 (NS SCTD); Court: Trial Division of the Supreme Court of Nova Scotia"
 					}
 				],
+				"seeAlso": []
+			}
+		]
+	},
+	{
+		"type": "web",
+		"url": "https://www.canlii.org/fr/doctrine/doc/2025CanLIIDocs1985",
+		"defer": true,
+		"items": [
+			{
+				"itemType": "journalArticle",
+				"title": "Contributions civilistes à l’interprétation des lois constitutionnelles canadiennes",
+				"creators": [
+					{
+						"firstName": "Jérémy",
+						"lastName": "Boulanger-Bonnelly",
+						"creatorType": "author"
+					}
+				],
+				"date": "2025",
+				"issue": "2",
+				"language": "fr",
+				"libraryCatalog": "CanLII",
+				"pages": "203",
+				"publicationTitle": "Revue de droit de McGill",
+				"url": "https://canlii.ca/t/8wq70",
+				"volume": "70",
+				"attachments": [
+					{
+						"title": "CanLII Full Text PDF",
+						"mimeType": "application/pdf"
+					}
+				],
+				"tags": [],
+				"notes": [],
 				"seeAlso": []
 			}
 		]
