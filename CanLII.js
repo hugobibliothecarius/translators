@@ -148,9 +148,24 @@ async function scrapeCommentary(doc, url) {
 	await em.doWeb(doc, url);
 }
 
+function scrapeLegislation(doc, url) {
+	var item = new Zotero.Item("statute");
+	// The page title metadata reads "<code> | <name of act>",
+	// e.g. "LRC 1985, c C-46 | Code criminel".
+	var parts = meta(doc, "dc.title").split("|");
+	item.nameOfAct = meta(doc, "lbh-title") || clean(parts[parts.length - 1]);
+	if (parts.length > 1) item.code = clean(parts[0]);
+	// dc.language follows CanLII's interface language, not the language of the text.
+	item.language = /^https?:\/\/(?:www\.)?canlii\.org\/en\//.test(url) ? "en" : "fr";
+	item.complete();
+}
+
 async function doWeb(doc, url) {
 	if (commentaryRegexp.test(url)) {
 		await scrapeCommentary(doc, url);
+	}
+	else if (legislationRegexp.test(url)) {
+		scrapeLegislation(doc, url);
 	}
 	else if (canLiiRegexp.test(url)) {
 		scrape(doc, url);
