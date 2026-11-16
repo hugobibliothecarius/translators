@@ -39,6 +39,9 @@
 var canLiiRegexp = /^https?:\/\/(?:www\.)?canlii\.org\/(?:en|fr)\/[^/]+\/[^/]+\/doc\//;
 // Commentary documents, e.g. /fr/doctrine/doc/2025CanLIIDocs1985 or /en/commentary/doc/2025CanLIIDocs1985
 var commentaryRegexp = /^https?:\/\/(?:www\.)?canlii\.org\/(?:en\/commentary|fr\/doctrine)\/doc\/([^/?#]+)/;
+// Statutes and regulations, e.g. /fr/ca/legis/lois/lrc-1985-c-c-46/derniere/lrc-1985-c-c-46.html
+// or /en/qc/laws/regu/cqlr-c-a-29-r-1/latest/cqlr-c-a-29-r-1.html
+var legislationRegexp = /^https?:\/\/(?:www\.)?canlii\.org\/(?:fr\/[^/]+\/legis|en\/[^/]+\/laws)\/[^/]+\/[^/]+\/[^/]+\/[^/?#]+\.html/;
 
 function clean(value) {
 	return (value || "").replace(/\s+/g, " ").trim();
@@ -65,6 +68,7 @@ function detectWeb(doc, url) {
 	if (commentaryRegexp.test(url)) {
 		return meta(doc, "citation_journal_title") ? "journalArticle" : "document";
 	}
+	if (legislationRegexp.test(url)) return "statute";
 	if (canLiiRegexp.test(url)) return "case";
 	for (var link of doc.querySelectorAll("a[href]")) {
 		if (canLiiRegexp.test(link.href)) return "multiple";
