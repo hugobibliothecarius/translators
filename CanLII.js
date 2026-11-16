@@ -162,6 +162,8 @@ function scrapeLegislation(doc, url) {
 	// the address of the latest version instead.
 	item.url = metadataValue(doc, ["lien vers la dernière version", "link to the latest version"])
 		|| url.replace(/\/[^/]+\/([^/?#]+\.html)(?:[?#].*)?$/, "/" + (english ? "latest" : "derniere") + "/$1");
+	// CanLII offers no PDF for legislation.
+	item.attachments.push({ document: doc, title: "CanLII Snapshot" });
 	item.complete();
 }
 
