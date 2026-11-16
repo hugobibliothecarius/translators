@@ -536,6 +536,75 @@ var testCases = [
 				"seeAlso": []
 			}
 		]
+	},
+	{
+		"type": "web",
+		"url": "https://www.canlii.org/fr/ca/legis/lois/lrc-1985-c-c-46/derniere/lrc-1985-c-c-46.html",
+		"items": [
+			{
+				"itemType": "statute",
+				"nameOfAct": "Code criminel",
+				"creators": [],
+				"code": "LRC 1985, c C-46",
+				"language": "fr",
+				"url": "https://canlii.ca/t/ckjd",
+				"attachments": [
+					{
+						"title": "CanLII Snapshot",
+						"mimeType": "text/html"
+					}
+				],
+				"tags": [],
+				"notes": [],
+				"seeAlso": []
+			}
+		]
+	},
+	{
+		"type": "web",
+		"url": "https://www.canlii.org/fr/qc/legis/regl/rlrq-c-a-29-r-1/derniere/rlrq-c-a-29-r-1.html",
+		"items": [
+			{
+				"itemType": "statute",
+				"nameOfAct": "Règlement sur l'admissibilité et l'inscription des personnes auprès de la Régie de l'assurance maladie du Québec",
+				"creators": [],
+				"code": "RLRQ c A-29, r 1",
+				"language": "fr",
+				"url": "https://canlii.ca/t/ch8d",
+				"attachments": [
+					{
+						"title": "CanLII Snapshot",
+						"mimeType": "text/html"
+					}
+				],
+				"tags": [],
+				"notes": [],
+				"seeAlso": []
+			}
+		]
+	},
+	{
+		"type": "web",
+		"url": "https://www.canlii.org/en/ca/laws/stat/rsc-1985-c-c-46/latest/rsc-1985-c-c-46.html",
+		"items": [
+			{
+				"itemType": "statute",
+				"nameOfAct": "Criminal Code",
+				"creators": [],
+				"code": "RSC 1985, c C-46",
+				"language": "en",
+				"url": "https://canlii.ca/t/7vf2",
+				"attachments": [
+					{
+						"title": "CanLII Snapshot",
+						"mimeType": "text/html"
+					}
+				],
+				"tags": [],
+				"notes": [],
+				"seeAlso": []
+			}
+		]
 	}
 ]
 /** END TEST CASES **/
