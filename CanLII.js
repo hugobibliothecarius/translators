@@ -156,7 +156,12 @@ function scrapeLegislation(doc, url) {
 	item.nameOfAct = meta(doc, "lbh-title") || clean(parts[parts.length - 1]);
 	if (parts.length > 1) item.code = clean(parts[0]);
 	// dc.language follows CanLII's interface language, not the language of the text.
-	item.language = /^https?:\/\/(?:www\.)?canlii\.org\/en\//.test(url) ? "en" : "fr";
+	var english = /^https?:\/\/(?:www\.)?canlii\.org\/en\//.test(url);
+	item.language = english ? "en" : "fr";
+	// Permalink to the latest version. Dated versions lack this row, so build
+	// the address of the latest version instead.
+	item.url = metadataValue(doc, ["lien vers la dernière version", "link to the latest version"])
+		|| url.replace(/\/[^/]+\/([^/?#]+\.html)(?:[?#].*)?$/, "/" + (english ? "latest" : "derniere") + "/$1");
 	item.complete();
 }
 
